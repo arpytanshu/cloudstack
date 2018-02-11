@@ -110,6 +110,9 @@ if [ ! -f /etc/sysconfig/libvirtd.backup ]; then
 fi
 sed -i "/LIBVIRTD_ARGS/c\LIBVIRTD_ARGS=\"--listen\"" /etc/sysconfig/libvirtd
 
+#restart libvirt for changes to take effect
+service libvirtd restart
+
 
 #########################
 # Configure network bridges

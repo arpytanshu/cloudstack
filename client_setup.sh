@@ -16,6 +16,7 @@ cs_version=4.9              #cloudstack version
 machine_ip=192.168.0.101    #IP of the machine running this script
 machine_hostname=host1      #hostname of the machine running thi script
 domain_name=cloud.priv
+gateway=192.168.0.1
 
 
 ##########################
@@ -108,3 +109,74 @@ if [ ! -f /etc/sysconfig/libvirtd.backup ]; then
   cp /etc/sysconfig/libvirtd /etc/sysconfig/libvirtd.backup
 fi
 sed -i "/LIBVIRTD_ARGS/c\LIBVIRTD_ARGS=\"--listen\"" /etc/sysconfig/libvirtd
+
+
+#########################
+# Configure network bridges
+#########################
+
+if [ ! -f /etc/sysconfig/network-scripts/ifcfg-eth0.100 ]; then
+  touch /etc/sysconfig/network-scripts/ifcfg-eth0.100
+  echo "DEVICE=eth0.100
+ONBOOT=yes
+HOTPLUG=no
+BOOTPROTO=none
+TYPE=Ethernet
+VLAN=yes
+IPADDR=$machine_ip
+GATEWAY=$gateway
+NETMASK=255.255.255.0" > /etc/sysconfig/network-scripts/ifcfg-eth0.100
+echo "[INFO] Added VLAN eth0.100"
+fi
+
+if [ ! -f /etc/sysconfig/network-scripts/ifcfg-eth0.200 ]; then
+  touch /etc/sysconfig/network-scripts/ifcfg-eth0.200
+  echo "DEVICE=eth0.200
+ONBOOT=yes
+HOTPLUG=no
+BOOTPROTO=none
+TYPE=Ethernet
+VLAN=yes
+BRIDGE=cloudbr0" > /etc/sysconfig/network-scripts/ifcfg-eth0.200
+echo "[INFO] Added VLAN eth0.200"
+fi
+
+
+if [ ! -f /etc/sysconfig/network-scripts/ifcfg-eth0.300 ]; then
+  touch /etc/sysconfig/network-scripts/ifcfg-eth0.300
+  echo "DEVICE=eth0.300
+ONBOOT=yes
+HOTPLUG=no
+BOOTPROTO=none
+TYPE=Ethernet
+VLAN=yes
+BRIDGE=cloudbr1" > /etc/sysconfig/network-scripts/ifcfg-eth0.300
+echo "[INFO] Added VLAN eth0.300"
+fi
+
+
+if [ ! -f /etc/sysconfig/network-scripts/ifcfg-cloudbr0 ]; then
+  touch /etc/sysconfig/network-scripts/ifcfg-cloudbr0
+  echo "DEVICE=cloudbr0
+TYPE=Bridge
+ONBOOT=yes
+BOOTPROTO=none
+IPV6INIT=no
+IPV6_AUTOCONF=no
+DELAY=5
+STP=yes" > /etc/sysconfig/network-scripts/ifcfg-cloudbr0
+echo "[INFO] Added BRIDGE cloudbr0"
+fi
+
+if [ ! -f /etc/sysconfig/network-scripts/ifcfg-cloudbr1 ]; then
+  touch /etc/sysconfig/network-scripts/ifcfg-cloudbr1
+  echo "DEVICE=cloudbr1
+TYPE=Bridge
+ONBOOT=yes
+BOOTPROTO=none
+IPV6INIT=no
+IPV6_AUTOCONF=no
+DELAY=5
+STP=yes" > /etc/sysconfig/network-scripts/ifcfg-cloudbr1
+echo "[INFO] Added BRIDGE cloudbr1"
+fi

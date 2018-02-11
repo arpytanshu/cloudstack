@@ -3,7 +3,6 @@
 # Script to setup cloudstack management node.
 # Tested version Cloudstack __version__ and Centos __version__
 #
-# Copyright @ Alok Anand <alok4nand@gmail.com>
 # Copyright @ Arpitanshu <arpytanshu@gmail.com>
 
 
